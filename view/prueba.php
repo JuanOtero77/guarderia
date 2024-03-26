@@ -2,10 +2,11 @@
 include_once "../models/usuario.php";
 
 $u = new usuario();
-$u->clave = "1234";
-$u->nombre = "pepito";
-$u->correo = "pepito23@gmail.com";
-$u->rol = "admin";
+$u->id = 3;
+$u->clave = "7892";
+$u->nombre = "pep1ita";
+$u->correo = "pepi3234ta32@gmail.com";
+$u->rol = "tio";
 try{
     $u->save();
     $total = @usuario::count();
