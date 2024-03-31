@@ -6,7 +6,7 @@ require_once $_SERVER["DOCUMENT_ROOT"]."pagos/models/usuario.php";
 
 $msj = @$_REQUEST["msj"];
 $u = @$_SESSION["usuario.find"];
-$u = ($u !== NULL) ? unserialize($u) : null;
+$u = unserialize($u);
 
 ?>
 <!DOCTYPE html>

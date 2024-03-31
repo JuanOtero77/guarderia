@@ -25,6 +25,10 @@ class usuarioController{
             case "eliminar":
                 usuarioController::eliminar();
                 break;
+            case "todo":
+                //invocamos al metodo editar
+                usuarioController::listarTodo();
+                break;
             default:
             //sino es la accion correcta, mandamos error
             header("Location: ../view/error.php?msj=Accion no permitida");
@@ -199,6 +203,29 @@ class usuarioController{
             exit;
         }
 
+    }
+    //------------------------------------
+    public static function listarTodo(){
+        try{
+            //obtenemos usuarios
+            $usuarios = usuario::all();
+            if ($usuarios == null){
+                $_SESSION["usuarios.all"] = null;
+                $msj = "total usuarios: 0";
+            } else{
+                $total = count($usuarios);
+                //serializar la lista de usuarios
+                $usuarios = serialize($usuarios);
+                //colocamos la lista en sesion para recuperalra en la pag de reportes
+                $_SESSION["usuarios.all"] = $usuarios;
+            }
+            //redireccionamos hacia reportes
+            $msj = "total usuarios: $total";
+            header("Location: ../view/usuarios/listarTodo.php?msj=$msj");
+        } catch (Exception $error){
+            $_SESSION["usuarios.all"] = null;
+            header("Location: ../view/usuarios/listarTodo.php?msj=total usaurios: 0");
+        }
     }
 }
 
