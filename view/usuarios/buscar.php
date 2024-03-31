@@ -2,7 +2,7 @@
 //obtenemos el mensaje enviado por el controlador
 session_start();
 
-require_once $_SERVER["DOCUMENT_ROOT"] . "pagos/models/usuario.php";
+require_once $_SERVER["DOCUMENT_ROOT"]."pagos/models/usuario.php";
 
 $msj = @$_REQUEST["msj"];
 $u = @$_SESSION["usuario.find"];
@@ -14,12 +14,13 @@ $u = ($u !== NULL) ? unserialize($u) : null;
 <head>
     <meta charset="UTF-8">
     <title>EJEMPLO DE CRUD PHP ORM ACTIVERECORD</title>
+    <script src="../js/validaciones.js"> </script>
 </head>
 
 <body>
     <center>
         <h1>BUSCAR USUARIOS</h1>
-        <hr>
+        
         <!-- EL FORMULARIO HTML -->
         <form action="../../controllers/usuarioController.php" method="POST">
             <table>
@@ -59,14 +60,20 @@ $u = ($u !== NULL) ? unserialize($u) : null;
                 <tr>
                     <td colspan="2" style="text-align: right">
                         <input type="reset" id="limpiar" value="Limpiar">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <input type="submit" id="accion" name="accion" value="Buscar">
+                        <input type="submit" id="accion" name="accion" value="Buscar">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" id="editar" name="accion" value="editar" disabled>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" id="eliminar" name="accion" value="eliminar" disabled>
                     </td>
                 </tr>
             </table>
         </form>
         <!-- Mostramos el mensaje enviado por el controlador-->
         <span style="color: red;"><?= ($msj != NULL || isset($msj)) ? $msj : "" ?></span>
-    </center>    
+    </center>
+    <script>
+        habilitarBotones();
+        confirmarOperacion();
+    </script>    
 </body>
 
 </html>

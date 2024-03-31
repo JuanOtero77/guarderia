@@ -18,6 +18,13 @@ class usuarioController{
                 //invocamos al metodo buscar
                 usuarioController::buscar();
                 break;
+            case "editar":
+                //invocamos al metodo editar
+                usuarioController::editar();
+                break;
+            case "eliminar":
+                usuarioController::eliminar();
+                break;
             default:
             //sino es la accion correcta, mandamos error
             header("Location: ../view/error.php?msj=Accion no permitida");
@@ -79,6 +86,7 @@ class usuarioController{
         //colocamos el usuario en la sesion
         $_SESSION["usuario.find"] = serialize($u);
         $msj = "usuario encontrado";
+
         //redireccionar a la pagina guardar envidandole un mensaje
         header("Location: ../view/usuarios/buscar.php?msj=$msj");
         exit;
@@ -91,7 +99,7 @@ class usuarioController{
         }
         else{
            //otro mensaje sino es error por usuario duplicado
-           $msj = "ocurrio un error al guardar usuario"; 
+           $msj = "ocurrio un error al buscar usuario"; 
         }
        //redireccionamos a la pagina agregar con el mensaje de error
        $_SESSION["usuario.find"] = NULL;
@@ -100,6 +108,98 @@ class usuarioController{
          }
     }
     //------------------------------------
+    public static function editar() {
+        //Primero se busca la sucursal
+        $id = @$_REQUEST["id"];
+
+        //Obtener el usuario
+        $u = @$_SESSION["usuario.find"]; 
+
+        //Convertir a objeto
+        $u = unserialize($u); 
+
+        if ($u->id != $id) {
+            $msg = "El id no corresponde al usuario consultado"; 
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+        }
+
+        //Nuevos campos en el formulari
+        $clave = @$_REQUEST["pass"]; 
+        $nombre = @$_REQUEST["nombre"]; 
+        $correo = @$_REQUEST["correo"];
+        $rol = @$_REQUEST["rol"];
+
+        //Lo colocamos en el usuario consultado
+        $u->clave = $clave;
+        $u->nombre = $nombre;  
+        $u->correo = $correo;
+        $u->rol = $rol; 
+
+        try { 
+            //Guardar la sucursal con los datos actualizados 
+            $u->save(); 
+
+            //Serializamos el sucursal nuevamente y lo guardamos en la sesión 
+            $_SESSION["usuario.find"] = serialize($u); 
+            $msg = "usuario editado"; 
+
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+            exit; 
+
+        } catch (Exception $error) {
+            if (strstr($error->getMessage(), $id)) {
+                $msg = "El usuario no existe"; 
+            }
+
+            else {
+                $msg = "Se encontró un error al editar el usuario";
+            }
+
+            $_SESSION["usuario.find"] = NULL;
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+            exit;
+        }
+    }
+    //------------------------------------
+    public static function eliminar() {
+        //Primero se busca la sucursal
+        $id = @$_REQUEST["id"];
+
+        //Obtener la sucursal  guardado en sesion 
+        $u = @$_SESSION["usuario.find"]; 
+
+        //Convertir a objeto
+        $u = unserialize($u); 
+
+        if ($u->id != $id) {
+            $msg = "El id no corresponde al usuario consultado"; 
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+        }
+
+        try {
+            $u->delete(); 
+            //Eliminamos la sesion de esta sucursal 
+            $u = @$_SESSION["usuario.find"] = null; 
+            $total = @usuario::count();
+            $msg = "Usuario eliminado, Total: $total"; 
+
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+            exit; 
+        } catch (Exception $error) {
+            if (strstr($error->getMessage(), $id)) {
+                $msg = "El usuario no existe"; 
+            }
+
+            else {
+                $msg = "Se encontró un error al eliminar el usuario";
+            }
+
+            $_SESSION["usuario.find"] = NULL;
+            header("Location: ../view/usuarios/buscar.php?msg=$msg");
+            exit;
+        }
+
+    }
 }
 
 //inicimos el procesamiento de la accion
